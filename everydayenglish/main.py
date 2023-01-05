@@ -30,7 +30,7 @@ def calculate_points(x1, y1, x2, y2, steps=5):
     return o
 
 
-class Touchtracer(FloatLayout):
+class EverydayEnglish(FloatLayout):
 
     def __init__(self, word_list) -> None:
         super().__init__()
@@ -162,15 +162,15 @@ class Touchtracer(FloatLayout):
         label.size = label.texture_size[0] + 20, label.texture_size[1] + 20
 
 
-class TouchtracerApp(App):
-    title = 'Touchtracer'
+class EverydayEnglishApp(App):
+    title = 'EverydayEnglish'
     icon = 'icon.png'
 
     def build(self):
 
         word_list = self.load_word()
 
-        return Touchtracer(word_list)
+        return EverydayEnglish(word_list)
 
     def on_pause(self):
         return True
@@ -185,4 +185,4 @@ class TouchtracerApp(App):
         return word_list
 
 if __name__ == '__main__':
-    TouchtracerApp().run()
+    EverydayEnglishApp().run()
