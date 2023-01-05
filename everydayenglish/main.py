@@ -35,7 +35,7 @@ class EverydayEnglish(FloatLayout):
     def __init__(self, word_list) -> None:
         super().__init__()
 
-        index = random.randint(0, len(word_list))
+        index = random.randint(0, len(word_list)-1)
         word = word_list[index]
 
         title_label = Label(text=word.title,
