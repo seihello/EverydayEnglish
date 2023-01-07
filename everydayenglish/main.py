@@ -7,7 +7,6 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
 import csv
-#import openpyxl
 
 __version__ = '1.0'
 
@@ -23,10 +22,6 @@ class EverydayEnglish(BoxLayout):
 
         self.orientation = 'vertical'
 
-        with self.canvas:
-            Color(0, 0, 0, 1)
-            self.rect = Rectangle(size=self.size, pos=self.pos)
-
         with open('english.csv') as f:
             reader = csv.reader(f)
             self.word_list = [row for row in reader]
@@ -34,32 +29,32 @@ class EverydayEnglish(BoxLayout):
         title, meaning, sentences = self.pickup_word()
 
         self.title_label = Label(text=title,
-                                 font_size='70',
+                                 font_size=70,
                                  color=(1, 0, 0, 1),
                                  halign='left',
                                  valign='top',
-                                 font_name=self.JAPANESE_FONT_NAME,
-                                 text_size=(self.width*0.9, self.height/3)
+                                 text_size=(self.width*0.9, self.height/3),
+                                 font_name=self.JAPANESE_FONT_NAME
                                  )
         self.add_widget(self.title_label)
 
         self.meaning_label = Label(text=meaning,
-                                   font_size='50',
-                                   color=(0, 1, 0, 1),
-                                   font_name=self.JAPANESE_FONT_NAME,
+                                   font_size=50,
                                    halign='left',
                                    valign='top',
-                                   text_size=(self.width*0.9, self.height/3)
+                                   text_size=(self.width*0.9, self.height/3),
+                                   color=(0, 1, 0, 1),
+                                   font_name=self.JAPANESE_FONT_NAME
                                    )
         self.add_widget(self.meaning_label)
 
         self.sentence_label = Label(text=sentences,
                                     font_size=50,
-                                    color=(1, 1, 1, 1),
-                                    font_name=self.JAPANESE_FONT_NAME,
                                     halign='left',
                                     valign='top',
-                                    text_size=(self.width*0.9, self.height/3)
+                                    text_size=(self.width*0.9, self.height/3),
+                                    color=(1, 1, 1, 1),
+                                    font_name=self.JAPANESE_FONT_NAME
                                     )
         self.add_widget(self.sentence_label)
 
