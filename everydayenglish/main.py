@@ -1,13 +1,14 @@
-import openpyxl
-import random
 from word import Word
 from math import sqrt
-from random import random
+from random import randint
 from kivy.metrics import dp
 from kivy.graphics import Color, Rectangle, Point, GraphicException
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App
+import csv
+#import openpyxl
+
 __version__ = '1.0'
 
 import kivy
@@ -16,7 +17,7 @@ kivy.require('1.0.6')
 
 class EverydayEnglish(BoxLayout):
 
-    JAPANESE_FONT_NAME = 'everydayenglish/ヒラギノ丸ゴ ProN W4.ttc'
+    JAPANESE_FONT_NAME = 'ヒラギノ丸ゴ ProN W4.ttc'
 
     def prepare(self):
 
@@ -26,10 +27,9 @@ class EverydayEnglish(BoxLayout):
             Color(0, 0, 0, 1)
             self.rect = Rectangle(size=self.size, pos=self.pos)
 
-        # Open the excel file
-        file_name = 'everydayenglish/english.xlsx'
-        work_book = openpyxl.load_workbook(file_name)
-        self.main_sheet = work_book["Main"]
+        with open('english.csv') as f:
+            reader = csv.reader(f)
+            self.word_list = [row for row in reader]
 
         title, meaning, sentences = self.pickup_word()
 
@@ -93,15 +93,15 @@ class EverydayEnglish(BoxLayout):
         sentences = ""
 
         while True:
-            index = random.randint(3, self.main_sheet.max_row)
-            target_row = self.main_sheet[index]
-            title = str(target_row[1].value)
-            meaning = str(target_row[2].value)
-            level = str(target_row[6].value)
-            if title == "None" or meaning == "None" or level == "5":
+            index = randint(3, len(self.word_list)-1)
+            target_row = self.word_list[index]
+            title = str(target_row[1])
+            meaning = str(target_row[2])
+            level = str(target_row[6])
+            if title == "" or meaning == "" or level == "5":
                 continue
 
-            sentences = str(target_row[3].value)
+            sentences = str(target_row[3])
 
             break
 
@@ -126,16 +126,6 @@ class EverydayEnglishApp(App):
     def on_pause(self):
         return True
 
-    def load_word(self):
-        word_list = [
-            Word("euphemism", "婉曲表現", "Pass away is a euphemism for die."),
-            Word("orthodox", "正統派の、伝統的な",
-                 "I am not a very orthodox kind of counsellor."),
-            Word("red flag", "怪しい、危険信号",
-                 "The fact that he tries to hide his text messages from you is a bit of a red flag.")
-        ]
-
-        return word_list
 
 
 if __name__ == '__main__':
