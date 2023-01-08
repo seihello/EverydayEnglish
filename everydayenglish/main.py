@@ -2,9 +2,11 @@ from word import Word
 from math import sqrt
 from random import randint
 from kivy.metrics import dp
+from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle, Point, GraphicException
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.app import App
 import csv
 
@@ -14,7 +16,7 @@ import kivy
 kivy.require('1.0.6')
 
 
-class EverydayEnglish(BoxLayout):
+class EverydayEnglish(Widget):
 
     JAPANESE_FONT_NAME = 'ヒラギノ丸ゴ ProN W4.ttc'
 
@@ -26,37 +28,31 @@ class EverydayEnglish(BoxLayout):
             reader = csv.reader(f)
             self.word_list = [row for row in reader]
 
-        title, meaning, sentences = self.pickup_word()
-
-        self.title_label = Label(text=title,
-                                 font_size=70,
-                                 color=(1, 0, 0, 1),
-                                 halign='left',
-                                 valign='top',
-                                 text_size=(self.width*0.9, self.height/3),
-                                 font_name=self.JAPANESE_FONT_NAME
-                                 )
+        self.title_label = Label(font_size=70,
+                            color=(1, 0, 0, 1),
+                            halign='left',
+                            valign='top',
+                            font_name=self.JAPANESE_FONT_NAME
+                            )
         self.add_widget(self.title_label)
 
-        self.meaning_label = Label(text=meaning,
-                                   font_size=50,
-                                   halign='left',
-                                   valign='top',
-                                   text_size=(self.width*0.9, self.height/3),
-                                   color=(0, 1, 0, 1),
-                                   font_name=self.JAPANESE_FONT_NAME
-                                   )
+        self.meaning_label = Label(font_size=50,
+                    color=(0, 1, 0, 1),
+                    halign='left',
+                    valign='top',
+                    font_name=self.JAPANESE_FONT_NAME
+                    )
         self.add_widget(self.meaning_label)
 
-        self.sentence_label = Label(text=sentences,
-                                    font_size=50,
-                                    halign='left',
-                                    valign='top',
-                                    text_size=(self.width*0.9, self.height/3),
-                                    color=(1, 1, 1, 1),
-                                    font_name=self.JAPANESE_FONT_NAME
-                                    )
-        self.add_widget(self.sentence_label)
+        self.sentence_label = Label(font_size=50,
+                    color=(1, 1, 1, 1),
+                    halign='left',
+                    valign='top',
+                    font_name=self.JAPANESE_FONT_NAME
+                    )
+        self.add_widget(self.sentence_label)      
+
+        self.update_word_label()
 
     def normalize_pressure(self, pressure):
         print(pressure)
@@ -77,9 +73,29 @@ class EverydayEnglish(BoxLayout):
 
     def update_word_label(self):
         title, meaning, sentences = self.pickup_word()
+
+        self.title_label.text_size = (self.width - 20, None)
         self.title_label.text = title
+        self.title_label.texture_update()
+        self.title_label.size = self.title_label.texture_size
+        self.title_label.text_size = self.title_label.texture_size
+        self.title_label.pos = (10, self.height - self.title_label.height)
+        
+        self.meaning_label.text_size = (self.width - 20, None)
         self.meaning_label.text = meaning
+        self.meaning_label.texture_update()
+        self.meaning_label.size = self.meaning_label.texture_size
+        self.meaning_label.text_size = self.meaning_label.texture_size
+        self.meaning_label.pos = (10, self.height - self.title_label.height - self.meaning_label.height)  
+
+        self.sentence_label.text_size = (self.width - 20, None)
         self.sentence_label.text = sentences
+        self.sentence_label.texture_update()
+        self.sentence_label.size = self.sentence_label.texture_size
+        self.sentence_label.text_size = self.sentence_label.texture_size
+        self.sentence_label.pos = (10, self.height - self.title_label.height - self.meaning_label.height - self.sentence_label.height)
+
+
 
     def pickup_word(self):
 
@@ -104,11 +120,13 @@ class EverydayEnglish(BoxLayout):
 
 
 class EverydayEnglishApp(App):
-    title = 'EverydayEnglish'
-    icon = 'icon.png'
+    #title = 'EverydayEnglish'
+    #icon = 'icon.png'
 
     def build(self):
 
+        self.icon = 'icon.png'
+        self.title = 'EverydayEnglish'
         self.main_frame = EverydayEnglish()
 
         return self.main_frame
