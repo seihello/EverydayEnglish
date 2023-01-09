@@ -15,7 +15,6 @@ __version__ = '1.0'
 import kivy
 kivy.require('1.0.6')
 
-
 class EverydayEnglish(Widget):
 
     JAPANESE_FONT_NAME = 'ヒラギノ丸ゴ ProN W4.ttc'
@@ -50,7 +49,7 @@ class EverydayEnglish(Widget):
                     valign='top',
                     font_name=self.JAPANESE_FONT_NAME
                     )
-        self.add_widget(self.sentence_label)      
+        self.add_widget(self.sentence_label)
 
         self.index = -1
         self.words = []
@@ -77,6 +76,10 @@ class EverydayEnglish(Widget):
             self.display_previous_word()
         elif touch.x < self.touch_down_x: # swiped left
             self.display_next_word()
+        
+        if self.meaning_label.x < touch.x < self.meaning_label.x + self.meaning_label.width:
+            if self.meaning_label.y < touch.y < self.meaning_label.y + self.meaning_label.height:
+                self.meaning_label.opacity = 100
     
     def display_next_word(self):
         self.index += 1
@@ -113,6 +116,7 @@ class EverydayEnglish(Widget):
         self.meaning_label.size = self.meaning_label.texture_size
         self.meaning_label.text_size = self.meaning_label.texture_size
         self.meaning_label.pos = (10, self.height - self.title_label.height - self.meaning_label.height)  
+        self.meaning_label.opacity = 0
 
         self.sentence_label.text_size = (self.width - 20, None)
         self.sentence_label.text = word.sentence
@@ -164,3 +168,5 @@ class EverydayEnglishApp(App):
 
 if __name__ == '__main__':
     EverydayEnglishApp().run()
+
+
