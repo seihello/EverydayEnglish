@@ -26,7 +26,7 @@ class EverydayEnglish(Widget):
 
         with open('english.csv') as f:
             reader = csv.reader(f)
-            self.word_list = [row for row in reader]
+            self.word_matrix = [row for row in reader]
 
         self.title_label = Label(font_size=70,
                             color=(1, 0, 0, 1),
@@ -52,7 +52,9 @@ class EverydayEnglish(Widget):
                     )
         self.add_widget(self.sentence_label)      
 
-        self.update_word_label()
+        self.index = -1
+        self.words = []
+        self.display_next_word()
 
     def normalize_pressure(self, pressure):
         print(pressure)
@@ -63,60 +65,79 @@ class EverydayEnglish(Widget):
         return dp(pressure * 10)
 
     def on_touch_down(self, touch):
-        pass
+        self.touch_down_x = touch.x
+        self.touch_down_y = touch.y
 
     def on_touch_move(self, touch):
         pass
 
     def on_touch_up(self, touch):
-        self.update_word_label()
 
-    def update_word_label(self):
-        title, meaning, sentences = self.pickup_word()
+        if self.touch_down_x < touch.x: # swiped right
+            self.display_previous_word()
+        elif touch.x < self.touch_down_x: # swiped left
+            self.display_next_word()
+    
+    def display_next_word(self):
+        self.index += 1
 
+        if self.index < len(self.words):
+            word = self.words[self.index]
+        elif self.index == len(self.words):
+            word = self.pickup_word()
+            self.words.append(word)
+            
+        self.update_word_label(word)
+
+    def display_previous_word(self):
+
+        if self.index <= 0:
+            pass
+        else:
+            self.index -= 1
+            word = self.words[self.index]
+            self.update_word_label(word)
+
+    def update_word_label(self, word):
+        
         self.title_label.text_size = (self.width - 20, None)
-        self.title_label.text = title
+        self.title_label.text = word.title
         self.title_label.texture_update()
         self.title_label.size = self.title_label.texture_size
         self.title_label.text_size = self.title_label.texture_size
         self.title_label.pos = (10, self.height - self.title_label.height)
         
         self.meaning_label.text_size = (self.width - 20, None)
-        self.meaning_label.text = meaning
+        self.meaning_label.text = word.meaning
         self.meaning_label.texture_update()
         self.meaning_label.size = self.meaning_label.texture_size
         self.meaning_label.text_size = self.meaning_label.texture_size
         self.meaning_label.pos = (10, self.height - self.title_label.height - self.meaning_label.height)  
 
         self.sentence_label.text_size = (self.width - 20, None)
-        self.sentence_label.text = sentences
+        self.sentence_label.text = word.sentence
         self.sentence_label.texture_update()
         self.sentence_label.size = self.sentence_label.texture_size
         self.sentence_label.text_size = self.sentence_label.texture_size
         self.sentence_label.pos = (10, self.height - self.title_label.height - self.meaning_label.height - self.sentence_label.height)
 
-
-
     def pickup_word(self):
 
-        title = ""
-        meaning = ""
-        sentences = ""
-
         while True:
-            index = randint(3, len(self.word_list)-1)
-            target_row = self.word_list[index]
+            index = randint(3, len(self.word_matrix)-1)
+            target_row = self.word_matrix[index]
             title = str(target_row[1])
             meaning = str(target_row[2])
             level = str(target_row[6])
             if title == "" or meaning == "" or level == "5":
                 continue
 
-            sentences = str(target_row[3])
+            sentence = str(target_row[3])
 
             break
 
-        return title, meaning, sentences
+        word = Word(title, meaning, sentence)
+        return word
 
 
 class EverydayEnglishApp(App):
