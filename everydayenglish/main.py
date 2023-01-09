@@ -77,10 +77,8 @@ class EverydayEnglish(Widget):
             self.display_previous_word()
         elif self.touch_down_x - touch.x > self.SWIPE_WIDTH : # swiped left
             self.display_next_word()
-        
-        if self.meaning_label.x < touch.x < self.meaning_label.x + self.meaning_label.width:
-            if self.meaning_label.y < touch.y < self.meaning_label.y + self.meaning_label.height:
-                self.meaning_label.opacity = 100
+        else:
+            self.meaning_label.opacity = 100
     
     def display_next_word(self):
         self.index += 1
