@@ -18,6 +18,7 @@ kivy.require('1.0.6')
 class EverydayEnglish(Widget):
 
     JAPANESE_FONT_NAME = 'ヒラギノ丸ゴ ProN W4.ttc'
+    SWIPE_WIDTH = 50
 
     def prepare(self):
 
@@ -72,9 +73,9 @@ class EverydayEnglish(Widget):
 
     def on_touch_up(self, touch):
 
-        if self.touch_down_x < touch.x: # swiped right
+        if touch.x - self.touch_down_x > self.SWIPE_WIDTH: # swiped right
             self.display_previous_word()
-        elif touch.x < self.touch_down_x: # swiped left
+        elif self.touch_down_x - touch.x > self.SWIPE_WIDTH : # swiped left
             self.display_next_word()
         
         if self.meaning_label.x < touch.x < self.meaning_label.x + self.meaning_label.width:
