@@ -40,7 +40,7 @@ class EverydayEnglish(Widget):
                                    )
         self.add_widget(self.meaning_label)
 
-        self.sentence_label = Label(font_size=50,
+        self.sentence_label = Label(font_size=80,
                                     color=(1, 1, 1, 1),
                                     halign='left',
                                     valign='top',
@@ -56,16 +56,27 @@ class EverydayEnglish(Widget):
         self.touch_down_x = touch.x
         self.touch_down_y = touch.y
 
+        self.scroll_start_y = touch.y
+
     def on_touch_up(self, touch):
-        # swiped right
-        if touch.x - self.touch_down_x > self.SWIPE_WIDTH:
-            self.display_previous_word()
-        # swiped left
-        elif self.touch_down_x - touch.x > self.SWIPE_WIDTH:
-            self.display_next_word()
-        # just touched
-        else:
-            self.meaning_label.opacity = 100
+        if abs(touch.y - self.touch_down_y) < self.SWIPE_WIDTH:
+            # swiped right
+            if touch.x - self.touch_down_x > self.SWIPE_WIDTH:
+                self.display_previous_word()
+            # swiped left
+            elif self.touch_down_x - touch.x > self.SWIPE_WIDTH:
+                self.display_next_word()
+            # just touched
+            else:
+                self.meaning_label.opacity = 100
+    
+    def on_touch_move(self, touch):
+        if self.scrollable:
+            dy = touch.y - self.scroll_start_y
+            self.title_label.y += dy
+            self.meaning_label.y += dy
+            self.sentence_label.y += dy
+        self.scroll_start_y = touch.y
 
     def display_next_word(self):
         self.index += 1
@@ -111,6 +122,13 @@ class EverydayEnglish(Widget):
         self.sentence_label.text_size = self.sentence_label.texture_size
         self.sentence_label.pos = (10, self.height - self.title_label.height -
                                    self.meaning_label.height - self.sentence_label.height)
+        
+        if self.sentence_label.y < 0:
+            print("Sticking out")
+            self.scrollable = True
+        else:
+            self.scrollable = False
+        
 
     def pickup_word(self):
         while True:
