@@ -73,9 +73,17 @@ class EverydayEnglish(Widget):
     def on_touch_move(self, touch):
         if self.scrollable:
             dy = touch.y - self.scroll_start_y
+
+            if self.sentence_label.y + dy > 0:
+                dy = self.sentence_label.y * -1
+            elif self.title_label.y + self.title_label.texture_size[1] + dy < self.height:
+                dy = self.height - (self.title_label.y + self.title_label.texture_size[1])
+
+            print(dy)
             self.title_label.y += dy
             self.meaning_label.y += dy
             self.sentence_label.y += dy
+
         self.scroll_start_y = touch.y
 
     def display_next_word(self):
