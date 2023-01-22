@@ -40,7 +40,7 @@ class EverydayEnglish(Widget):
                                    )
         self.add_widget(self.meaning_label)
 
-        self.sentence_label = Label(font_size=80,
+        self.sentence_label = Label(font_size=50,
                                     color=(1, 1, 1, 1),
                                     halign='left',
                                     valign='top',
@@ -59,7 +59,7 @@ class EverydayEnglish(Widget):
         self.scroll_start_y = touch.y
 
     def on_touch_up(self, touch):
-        if abs(touch.y - self.touch_down_y) < self.SWIPE_WIDTH:
+        if abs(touch.y - self.touch_down_y) < self.SWIPE_WIDTH * 2:
             # swiped right
             if touch.x - self.touch_down_x > self.SWIPE_WIDTH:
                 self.display_previous_word()
@@ -79,7 +79,6 @@ class EverydayEnglish(Widget):
             elif self.title_label.y + self.title_label.texture_size[1] + dy < self.height:
                 dy = self.height - (self.title_label.y + self.title_label.texture_size[1])
 
-            print(dy)
             self.title_label.y += dy
             self.meaning_label.y += dy
             self.sentence_label.y += dy
@@ -132,7 +131,6 @@ class EverydayEnglish(Widget):
                                    self.meaning_label.height - self.sentence_label.height)
         
         if self.sentence_label.y < 0:
-            print("Sticking out")
             self.scrollable = True
         else:
             self.scrollable = False
