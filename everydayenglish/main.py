@@ -1,9 +1,19 @@
+# Mine
 from word import Word
-from random import randint
+
+# Kivy
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle, Point, GraphicException
 from kivy.uix.label import Label
+from kivy.uix.button import Button
 from kivy.app import App
+from kivy.uix.widget import Widget
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
+
+# Others
+from random import randint
 import csv
 
 __version__ = '1.0'
@@ -20,6 +30,19 @@ class EverydayEnglish(Widget):
     def prepare(self):
         self.orientation = 'vertical'
 
+        self.scroll_view = ScrollView()
+        self.scroll_view.width = self.width
+        self.scroll_view.height = self.height
+        self.scroll_view.size_hint_y = None
+        self.add_widget(self.scroll_view)
+
+        self.word_panel = BoxLayout(spacing=10, size_hint_y=None)
+        self.word_panel.bind(minimum_height=self.word_panel.setter('height'))
+        self.word_panel.orientation = 'vertical'
+        self.scroll_view.add_widget(self.word_panel)
+    
+
+
         with open('english.csv') as f:
             reader = csv.reader(f)
             self.word_matrix = [row for row in reader]
@@ -28,62 +51,69 @@ class EverydayEnglish(Widget):
                                  color=(1, 0, 0, 1),
                                  halign='left',
                                  valign='top',
+                                 size_hint_y=None,
                                  font_name=self.JAPANESE_FONT_NAME
                                  )
-        self.add_widget(self.title_label)
+        self.word_panel.add_widget(self.title_label)
 
         self.meaning_label = Label(font_size=50,
                                    color=(0, 1, 0, 1),
                                    halign='left',
                                    valign='top',
+                                   size_hint_y=None,
                                    font_name=self.JAPANESE_FONT_NAME
                                    )
-        self.add_widget(self.meaning_label)
+        self.word_panel.add_widget(self.meaning_label)
 
-        self.sentence_label = Label(font_size=50,
+        self.sentence_label = Label(font_size=100,
                                     color=(1, 1, 1, 1),
                                     halign='left',
                                     valign='top',
+                                    size_hint_y=None,
                                     font_name=self.JAPANESE_FONT_NAME
                                     )
-        self.add_widget(self.sentence_label)
+        self.word_panel.add_widget(self.sentence_label)
+
+        # for i in range(50):
+        #     self.word_panel.add_widget(Button(text=str(i), height=40, size_hint_y=None))
 
         self.index = -1
         self.words = []
         self.display_next_word()
 
-    def on_touch_down(self, touch):
-        self.touch_down_x = touch.x
-        self.touch_down_y = touch.y
+    # def on_touch_down(self, touch):
+    #     self.touch_down_x = touch.x
+    #     self.touch_down_y = touch.y
 
-        self.scroll_start_y = touch.y
+    #     self.scroll_start_y = touch.y
 
-    def on_touch_up(self, touch):
-        if abs(touch.y - self.touch_down_y) < self.SWIPE_WIDTH * 2:
-            # swiped right
-            if touch.x - self.touch_down_x > self.SWIPE_WIDTH:
-                self.display_previous_word()
-            # swiped left
-            elif self.touch_down_x - touch.x > self.SWIPE_WIDTH:
-                self.display_next_word()
-            # just touched
-            else:
-                self.meaning_label.opacity = 100
+    # def on_touch_up(self, touch):
+    #     if abs(touch.y - self.touch_down_y) < self.SWIPE_WIDTH * 2:
+    #         # swiped right
+    #         if touch.x - self.touch_down_x > self.SWIPE_WIDTH:
+    #             self.display_previous_word()
+    #         # swiped left
+    #         elif self.touch_down_x - touch.x > self.SWIPE_WIDTH:
+    #             self.display_next_word()
+    #         # just touched
+    #         else:
+    #             self.meaning_label.opacity = 100
     
-    def on_touch_move(self, touch):
-        if self.scrollable:
-            dy = touch.y - self.scroll_start_y
+    # def on_touch_move(self, touch):
+    #     # if self.scrollable:
+    #     #     dy = touch.y - self.scroll_start_y
 
-            if self.sentence_label.y + dy > 0:
-                dy = self.sentence_label.y * -1
-            elif self.title_label.y + self.title_label.texture_size[1] + dy < self.height:
-                dy = self.height - (self.title_label.y + self.title_label.texture_size[1])
+    #     #     if self.sentence_label.y + dy > 0:
+    #     #         dy = self.sentence_label.y * -1
+    #     #     elif self.title_label.y + self.title_label.texture_size[1] + dy < self.height:
+    #     #         dy = self.height - (self.title_label.y + self.title_label.texture_size[1])
 
-            self.title_label.y += dy
-            self.meaning_label.y += dy
-            self.sentence_label.y += dy
+    #     #     self.title_label.y += dy
+    #     #     self.meaning_label.y += dy
+    #     #     self.sentence_label.y += dy
 
-        self.scroll_start_y = touch.y
+    #     # self.scroll_start_y = touch.y
+    #     pass
 
     def display_next_word(self):
         self.index += 1
@@ -106,29 +136,27 @@ class EverydayEnglish(Widget):
 
     def update_word_label(self, word):
 
-        self.title_label.text_size = (self.width - 20, None)
         self.title_label.text = word.title
+        self.title_label.text_size = (self.width - 20, None)
         self.title_label.texture_update()
         self.title_label.size = self.title_label.texture_size
         self.title_label.text_size = self.title_label.texture_size
-        self.title_label.pos = (10, self.height - self.title_label.height)
+        # self.title_label.pos = (10, self.height - self.title_label.height)
 
-        self.meaning_label.text_size = (self.width - 20, None)
         self.meaning_label.text = word.meaning
+        self.meaning_label.text_size = (self.width - 20, None)
         self.meaning_label.texture_update()
         self.meaning_label.size = self.meaning_label.texture_size
         self.meaning_label.text_size = self.meaning_label.texture_size
-        self.meaning_label.pos = (
-            10, self.height - self.title_label.height - self.meaning_label.height)
+        # self.meaning_label.pos = (10, self.height - self.title_label.height - self.meaning_label.height)
         self.meaning_label.opacity = 0
 
-        self.sentence_label.text_size = (self.width - 20, None)
         self.sentence_label.text = word.sentence
+        self.sentence_label.text_size = (self.width - 20, None)
         self.sentence_label.texture_update()
         self.sentence_label.size = self.sentence_label.texture_size
         self.sentence_label.text_size = self.sentence_label.texture_size
-        self.sentence_label.pos = (10, self.height - self.title_label.height -
-                                   self.meaning_label.height - self.sentence_label.height)
+        #self.sentence_label.pos = (10, self.height - self.title_label.height - self.meaning_label.height - self.sentence_label.height)
         
         if self.sentence_label.y < 0:
             self.scrollable = True
