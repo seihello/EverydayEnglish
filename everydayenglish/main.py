@@ -27,7 +27,7 @@ class EverydayEnglish(ScreenManager):
         self.load_words()
 
         self.create_word_list_screen()
-        #self.create_word_screen()
+        self.create_word_screen()
 
         # Initial screen
         self.current = "WordList"
@@ -68,7 +68,7 @@ class EverydayEnglish(ScreenManager):
         self.word_list_labels = []
         for i in range(displayed_rows):
             word = self.words[i]
-            word_label = WordLabel(self, word.title)            
+            word_label = WordLabel(self, word.title, i)           
             self.word_list_layout.add_widget(word_label)
 
             self.word_list_labels.append(word_label)
@@ -106,138 +106,79 @@ class EverydayEnglish(ScreenManager):
 
     def create_word_screen(self):
 
+        self.word_screen = Screen(name="Word")
+
+        self.word_scroll_view = ScrollView()
+        self.word_scroll_view.size_hint = (1, None)
+        self.word_scroll_view.size = (self.width, self.height)
+
+        self.word_layout = BoxLayout()
+        self.word_layout.size = self.size
+        self.word_layout.size_hint_y = None
+        self.word_layout.spacing = 30
+        self.word_layout.bind(minimum_height=self.word_layout.setter('height'))
+        self.word_layout.orientation = 'vertical'
+        self.word_layout.pos = (0, 0)
+
+
         self.title_label = Label(font_size=70,
                                  color=(1, 0, 0, 1),
                                  halign='left',
                                  valign='top',
+                                 size_hint_y=None,
+                                 width=self.width,
                                  font_name=self.JAPANESE_FONT_NAME
                                  )
-        self.add_widget(self.title_label)
+        self.word_layout.add_widget(self.title_label)
 
         self.meaning_label = Label(font_size=50,
                                    color=(0, 1, 0, 1),
                                    halign='left',
                                    valign='top',
+                                   size_hint_y=None,
+                                   width=self.width,
                                    font_name=self.JAPANESE_FONT_NAME
                                    )
-        self.add_widget(self.meaning_label)
+        self.word_layout.add_widget(self.meaning_label)
 
         self.sentence_label = Label(font_size=50,
                                     color=(1, 1, 1, 1),
                                     halign='left',
                                     valign='top',
+                                    size_hint_y=None,
+                                    width=self.width,
                                     font_name=self.JAPANESE_FONT_NAME
                                     )
-        self.add_widget(self.sentence_label)
+        self.word_layout.add_widget(self.sentence_label)
 
-        self.index = -1
-        self.words = []
-        self.display_next_word()
+        self.word_scroll_view.add_widget(self.word_layout)
+        self.word_screen.add_widget(self.word_scroll_view)
+        self.add_widget(self.word_screen)
 
-    def on_click_word(self):
-        pass
-
-    # def on_touch_down(self, touch):
-    #     self.touch_down_x = touch.x
-    #     self.touch_down_y = touch.y
-
-    #     self.scroll_start_y = touch.y
-
-    # def on_touch_up(self, touch):
-    #     if abs(touch.y - self.touch_down_y) < self.SWIPE_WIDTH * 2:
-    #         # swiped right
-    #         if touch.x - self.touch_down_x > self.SWIPE_WIDTH:
-    #             self.display_previous_word()
-    #         # swiped left
-    #         elif self.touch_down_x - touch.x > self.SWIPE_WIDTH:
-    #             self.display_next_word()
-    #         # just touched
-    #         else:
-    #             self.meaning_label.opacity = 100
-    
-    # def on_touch_move(self, touch):
-    #     if self.scrollable:
-    #         dy = touch.y - self.scroll_start_y
-
-    #         if self.sentence_label.y + dy > 0:
-    #             dy = self.sentence_label.y * -1
-    #         elif self.title_label.y + self.title_label.texture_size[1] + dy < self.height:
-    #             dy = self.height - (self.title_label.y + self.title_label.texture_size[1])
-
-    #         self.title_label.y += dy
-    #         self.meaning_label.y += dy
-    #         self.sentence_label.y += dy
-
-    #     self.scroll_start_y = touch.y
-
-    def display_next_word(self):
-        self.index += 1
-
-        if self.index < len(self.words):
-            word = self.words[self.index]
-        elif self.index == len(self.words):
-            word = self.pickup_word()
-            self.words.append(word)
-
-        self.update_word_label(word)
-
-    def display_previous_word(self):
-        if self.index <= 0:
-            pass
-        else:
-            self.index -= 1
-            word = self.words[self.index]
-            self.update_word_label(word)
-
-    def update_word_label(self, word):
+    def display_word(self, index):
+        word = self.words[index]
+        print(word.title)
 
         self.title_label.text_size = (self.width - 20, None)
         self.title_label.text = word.title
         self.title_label.texture_update()
         self.title_label.size = self.title_label.texture_size
         self.title_label.text_size = self.title_label.texture_size
-        self.title_label.pos = (10, self.height - self.title_label.height)
 
         self.meaning_label.text_size = (self.width - 20, None)
         self.meaning_label.text = word.meaning
         self.meaning_label.texture_update()
         self.meaning_label.size = self.meaning_label.texture_size
         self.meaning_label.text_size = self.meaning_label.texture_size
-        self.meaning_label.pos = (
-            10, self.height - self.title_label.height - self.meaning_label.height)
-        self.meaning_label.opacity = 0
 
         self.sentence_label.text_size = (self.width - 20, None)
         self.sentence_label.text = word.sentence
         self.sentence_label.texture_update()
         self.sentence_label.size = self.sentence_label.texture_size
         self.sentence_label.text_size = self.sentence_label.texture_size
-        self.sentence_label.pos = (10, self.height - self.title_label.height -
-                                   self.meaning_label.height - self.sentence_label.height)
-        
-        if self.sentence_label.y < 0:
-            self.scrollable = True
-        else:
-            self.scrollable = False
-        
 
-    def pickup_word(self):
-        while True:
-            index = randint(3, len(self.word_matrix)-1)
-            target_row = self.word_matrix[index]
-            title = str(target_row[1])
-            meaning = str(target_row[2])
-            level = str(target_row[6])
-            if title == "" or meaning == "" or level == "5":
-                continue
-
-            sentence = str(target_row[3])
-
-            break
-
-        word = Word(title, meaning, sentence)
-        return word
-
+        self.transition.direction = "right"
+        self.current = "Word"
 
 class EverydayEnglishApp(App):
 

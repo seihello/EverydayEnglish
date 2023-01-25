@@ -9,9 +9,11 @@ class Word:
         self.level = level
 
 class WordLabel(Label):
-    def __init__(self, app, title) -> None:
+    def __init__(self, app, title, index) -> None:
         super().__init__()
         self.app = app
+        self.index = index
+
         self.color = (1, 1, 1, 1)
         self.font_size = 40
         self.halign = 'left'
@@ -26,5 +28,6 @@ class WordLabel(Label):
         self.text_size = self.texture_size
 
     def on_touch_down(self, touch):
-        self.app.on_click_word()
+        if self.collide_point(*touch.pos):
+            self.app.display_word(self.index)
     
