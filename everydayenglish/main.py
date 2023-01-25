@@ -1,9 +1,13 @@
-from word import Word
-from random import randint
+from word import Word, WordLabel
+from random import randint, shuffle
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle, Point, GraphicException
 from kivy.uix.label import Label
 from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.scrollview import ScrollView
 import csv
 
 __version__ = '1.0'
@@ -12,17 +16,95 @@ import kivy
 kivy.require('1.0.6')
 
 
-class EverydayEnglish(Widget):
+class EverydayEnglish(ScreenManager):
 
     JAPANESE_FONT_NAME = 'ヒラギノ丸ゴ ProN W4.ttc'
     SWIPE_WIDTH = 50
 
     def prepare(self):
-        self.orientation = 'vertical'
+        #self.orientation = 'vertical'
 
+        self.load_words()
+
+        self.create_word_list_screen()
+        #self.create_word_screen()
+
+        # Initial screen
+        self.current = "WordList"
+
+    # Load words from the csv file to make a list
+    def load_words(self):
         with open('english.csv') as f:
             reader = csv.reader(f)
             self.word_matrix = [row for row in reader]
+        
+        self.words = []
+        for i in range(3, len(self.word_matrix)-1):
+            word = Word(self.word_matrix[i][1], self.word_matrix[i][2], self.word_matrix[i][3], self.word_matrix[i][6])
+            if word.title != 'None' and word.title != '':
+                self.words.append(word)
+        
+        shuffle(self.words)
+
+    def create_word_list_screen(self):
+        self.word_list_screen = Screen(name="WordList")
+
+        self.word_list_scroll_view = ScrollView()
+        self.word_list_scroll_view.size_hint = (1, None)
+        self.word_list_scroll_view.size = (self.width, self.height)
+
+        self.word_list_layout = Widget()
+        self.word_list_layout.size = (self.width, self.height * 3)
+        self.word_list_layout.size_hint_y = None
+        #self.word_list_layout.spacing = 30
+        #self.word_list_layout.bind(minimum_height=self.word_list_layout.setter('height'))
+        #self.word_list_layout.orientation = 'vertical'
+        self.word_list_layout.pos = (0, 0)
+        
+        displayed_rows = 100
+        space = 20
+        height_sum = 0
+
+        self.word_list_labels = []
+        for i in range(displayed_rows):
+            word = self.words[i]
+            word_label = WordLabel(self, word.title)            
+            self.word_list_layout.add_widget(word_label)
+
+            self.word_list_labels.append(word_label)
+            height_sum += word_label.texture_size[1]
+
+            # line = Widget(size=(self.width, 100))
+            # with self.word_list_layout.canvas:
+            #     Color(1, 1, 1, 1)
+            #     Rectangle(pos=(0, 0), size=(100, 10))
+            # line.size_hint = (1, None)
+            # self.word_list_layout.add_widget(line)
+    
+        self.word_list_layout.height = height_sum + space * displayed_rows
+
+        y = self.word_list_layout.height
+        for i in range(displayed_rows):
+            y -= self.word_list_labels[i].texture_size[1]
+            self.word_list_labels[i].pos = (0, y)
+
+            y -= space / 2
+            with self.word_list_layout.canvas:
+                Color(1, 1, 1, 1)
+                Rectangle(pos=(0, y), size=(self.width, 3))
+            y -= space / 2
+
+        # with self.word_list_layout.canvas:
+        #     Color(1, 1, 1, 1)
+        #     Rectangle(size=(self.width, 3))
+        #     Color(1, 0, 1, 1)
+        #     Rectangle(pos=(0, 900),size=(self.width, 3))
+
+        self.word_list_scroll_view.add_widget(self.word_list_layout)
+        self.word_list_screen.add_widget(self.word_list_scroll_view)
+        self.add_widget(self.word_list_screen)
+
+    def create_word_screen(self):
 
         self.title_label = Label(font_size=70,
                                  color=(1, 0, 0, 1),
@@ -52,38 +134,41 @@ class EverydayEnglish(Widget):
         self.words = []
         self.display_next_word()
 
-    def on_touch_down(self, touch):
-        self.touch_down_x = touch.x
-        self.touch_down_y = touch.y
+    def on_click_word(self):
+        pass
 
-        self.scroll_start_y = touch.y
+    # def on_touch_down(self, touch):
+    #     self.touch_down_x = touch.x
+    #     self.touch_down_y = touch.y
 
-    def on_touch_up(self, touch):
-        if abs(touch.y - self.touch_down_y) < self.SWIPE_WIDTH * 2:
-            # swiped right
-            if touch.x - self.touch_down_x > self.SWIPE_WIDTH:
-                self.display_previous_word()
-            # swiped left
-            elif self.touch_down_x - touch.x > self.SWIPE_WIDTH:
-                self.display_next_word()
-            # just touched
-            else:
-                self.meaning_label.opacity = 100
+    #     self.scroll_start_y = touch.y
+
+    # def on_touch_up(self, touch):
+    #     if abs(touch.y - self.touch_down_y) < self.SWIPE_WIDTH * 2:
+    #         # swiped right
+    #         if touch.x - self.touch_down_x > self.SWIPE_WIDTH:
+    #             self.display_previous_word()
+    #         # swiped left
+    #         elif self.touch_down_x - touch.x > self.SWIPE_WIDTH:
+    #             self.display_next_word()
+    #         # just touched
+    #         else:
+    #             self.meaning_label.opacity = 100
     
-    def on_touch_move(self, touch):
-        if self.scrollable:
-            dy = touch.y - self.scroll_start_y
+    # def on_touch_move(self, touch):
+    #     if self.scrollable:
+    #         dy = touch.y - self.scroll_start_y
 
-            if self.sentence_label.y + dy > 0:
-                dy = self.sentence_label.y * -1
-            elif self.title_label.y + self.title_label.texture_size[1] + dy < self.height:
-                dy = self.height - (self.title_label.y + self.title_label.texture_size[1])
+    #         if self.sentence_label.y + dy > 0:
+    #             dy = self.sentence_label.y * -1
+    #         elif self.title_label.y + self.title_label.texture_size[1] + dy < self.height:
+    #             dy = self.height - (self.title_label.y + self.title_label.texture_size[1])
 
-            self.title_label.y += dy
-            self.meaning_label.y += dy
-            self.sentence_label.y += dy
+    #         self.title_label.y += dy
+    #         self.meaning_label.y += dy
+    #         self.sentence_label.y += dy
 
-        self.scroll_start_y = touch.y
+    #     self.scroll_start_y = touch.y
 
     def display_next_word(self):
         self.index += 1
