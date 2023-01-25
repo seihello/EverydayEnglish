@@ -177,7 +177,7 @@ class EverydayEnglish(ScreenManager):
         self.sentence_label.size = self.sentence_label.texture_size
         self.sentence_label.text_size = self.sentence_label.texture_size
 
-        self.transition.direction = "right"
+        self.transition.direction = "left"
         self.current = "Word"
 
 class EverydayEnglishApp(App):
