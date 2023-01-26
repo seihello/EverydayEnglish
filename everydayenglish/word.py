@@ -20,14 +20,16 @@ class WordLabel(Label):
         self.valign = 'top'
         self.font_name = 'ヒラギノ丸ゴ ProN W4.ttc'
 
+        self.font_size = 50
         self.size_hint_y = None
         self.text = title
-        self.text_size = (app.width-100, None)
+        #self.width = app.width*0.9
+        self.text_size = (app.width*0.92, None)
         self.texture_update()
         self.size = self.texture_size
-        self.text_size = self.texture_size
+        
 
-    def on_touch_down(self, touch):
+    def on_touch_up(self, touch):
         if self.collide_point(*touch.pos):
             self.app.display_word(self.index)
     

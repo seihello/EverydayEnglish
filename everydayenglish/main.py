@@ -63,7 +63,7 @@ class EverydayEnglish(ScreenManager):
         #self.word_list_layout.orientation = 'vertical'
         self.word_list_layout.pos = (0, 0)
         
-        displayed_rows = 100
+        displayed_rows = 500
         space = 20
         height_sum = 0
 
@@ -81,12 +81,12 @@ class EverydayEnglish(ScreenManager):
         y = self.word_list_layout.height
         for i in range(displayed_rows):
             y -= self.word_list_labels[i].texture_size[1]
-            self.word_list_labels[i].pos = (0, y)
+            self.word_list_labels[i].pos = (self.width*0.04, y)
 
             y -= space / 2
             with self.word_list_layout.canvas:
                 Color(1, 1, 1, 1)
-                Rectangle(pos=(0, y), size=(self.width, 3))
+                Rectangle(pos=(self.width*0.02, y), size=(self.width*0.96, 1))
             y -= space / 2
 
         self.word_list_scroll_view.add_widget(self.word_list_layout)
