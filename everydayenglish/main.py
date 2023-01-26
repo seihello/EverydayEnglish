@@ -9,6 +9,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
+from operator import itemgetter
 import csv
 
 __version__ = '1.0'
@@ -47,6 +48,7 @@ class EverydayEnglish(ScreenManager):
                 self.words.append(word)
         
         shuffle(self.words)
+        # self.words = sorted(self.words, key=lambda w: w.level)
 
     def create_word_list_screen(self):
         self.word_list_screen = Screen(name="WordList")
@@ -70,18 +72,19 @@ class EverydayEnglish(ScreenManager):
         self.word_list_labels = []
         for i in range(displayed_rows):
             word = self.words[i]
-            word_label = WordLabel(self, word.title, i)           
-            self.word_list_layout.add_widget(word_label)
+            word_label = WordLabel(self, word, i)           
+            self.word_list_layout.add_widget(word_label.title_label)
+            self.word_list_layout.add_widget(word_label.level_label)
 
             self.word_list_labels.append(word_label)
-            height_sum += word_label.texture_size[1]
+            height_sum += word_label.title_label.texture_size[1]
     
         self.word_list_layout.height = height_sum + space * displayed_rows
 
         y = self.word_list_layout.height
         for i in range(displayed_rows):
-            y -= self.word_list_labels[i].texture_size[1]
-            self.word_list_labels[i].pos = (self.width*0.04, y)
+            y -= self.word_list_labels[i].title_label.texture_size[1]
+            self.word_list_labels[i].set_y(y)
 
             y -= space / 2
             with self.word_list_layout.canvas:
@@ -109,7 +112,7 @@ class EverydayEnglish(ScreenManager):
         self.word_layout.orientation = 'vertical'
         self.word_layout.pos = (0, 0)
 
-
+        print("make")
         self.title_label = Label(font_size=70,
                                  color=(1, 0, 0, 1),
                                  halign='left',
@@ -154,7 +157,6 @@ class EverydayEnglish(ScreenManager):
 
     def display_word(self, index):
         word = self.words[index]
-        print(word.title)
 
         self.title_label.text_size = (self.width - 20, None)
         self.title_label.text = word.title
