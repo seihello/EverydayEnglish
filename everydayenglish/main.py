@@ -8,12 +8,14 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.button import Button
 import csv
 
 __version__ = '1.0'
 
 import kivy
 kivy.require('1.0.6')
+
 
 
 class EverydayEnglish(ScreenManager):
@@ -73,13 +75,6 @@ class EverydayEnglish(ScreenManager):
 
             self.word_list_labels.append(word_label)
             height_sum += word_label.texture_size[1]
-
-            # line = Widget(size=(self.width, 100))
-            # with self.word_list_layout.canvas:
-            #     Color(1, 1, 1, 1)
-            #     Rectangle(pos=(0, 0), size=(100, 10))
-            # line.size_hint = (1, None)
-            # self.word_list_layout.add_widget(line)
     
         self.word_list_layout.height = height_sum + space * displayed_rows
 
@@ -93,12 +88,6 @@ class EverydayEnglish(ScreenManager):
                 Color(1, 1, 1, 1)
                 Rectangle(pos=(0, y), size=(self.width, 3))
             y -= space / 2
-
-        # with self.word_list_layout.canvas:
-        #     Color(1, 1, 1, 1)
-        #     Rectangle(size=(self.width, 3))
-        #     Color(1, 0, 1, 1)
-        #     Rectangle(pos=(0, 900),size=(self.width, 3))
 
         self.word_list_scroll_view.add_widget(self.word_list_layout)
         self.word_list_screen.add_widget(self.word_list_scroll_view)
@@ -151,6 +140,14 @@ class EverydayEnglish(ScreenManager):
                                     )
         self.word_layout.add_widget(self.sentence_label)
 
+        self.back_to_word_list_button = Button()
+        self.back_to_word_list_button.text = "Back to List"
+        self.back_to_word_list_button.size = (self.width, 100)
+        self.back_to_word_list_button.size_hint_y = None
+        self.back_to_word_list_button.font_size = 50
+        self.back_to_word_list_button.on_release = self.back_to_word_list
+        self.word_layout.add_widget(self.back_to_word_list_button)
+
         self.word_scroll_view.add_widget(self.word_layout)
         self.word_screen.add_widget(self.word_scroll_view)
         self.add_widget(self.word_screen)
@@ -164,6 +161,7 @@ class EverydayEnglish(ScreenManager):
         self.title_label.texture_update()
         self.title_label.size = self.title_label.texture_size
         self.title_label.text_size = self.title_label.texture_size
+
 
         self.meaning_label.text_size = (self.width - 20, None)
         self.meaning_label.text = word.meaning
@@ -179,6 +177,10 @@ class EverydayEnglish(ScreenManager):
 
         self.transition.direction = "left"
         self.current = "Word"
+    
+    def back_to_word_list(self):
+        self.transition.direction = "right"
+        self.current = "WordList"
 
 class EverydayEnglishApp(App):
 
@@ -201,3 +203,4 @@ class EverydayEnglishApp(App):
 
 if __name__ == '__main__':
     EverydayEnglishApp().run()
+
