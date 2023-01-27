@@ -10,14 +10,13 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
 from operator import itemgetter
+from gui import MyLabel
 import csv
 
 __version__ = '1.0'
 
 import kivy
 kivy.require('1.0.6')
-
-
 
 class EverydayEnglish(ScreenManager):
 
@@ -52,6 +51,24 @@ class EverydayEnglish(ScreenManager):
 
     def create_word_list_screen(self):
         self.word_list_screen = Screen(name="WordList")
+
+        # self.top_bar = Widget()
+        # self.top_bar.size = (self.width, self.height*0.1)
+        # self.top_bar.pos = (0, self.height*0.9)
+        # self.word_list_screen.add_widget(self.top_bar)
+
+        self.word_list_bar_label = MyLabel()
+        self.word_list_bar_label.text = "Word List"
+        self.word_list_bar_label.size_hint_y = None
+        self.word_list_bar_label.disabled_color      = (1, 1, 1, 1)
+        self.word_list_bar_label.font_size  = 40
+        self.word_list_bar_label.halign     = 'center'
+        self.word_list_bar_label.valign     = 'middle'
+        self.word_list_bar_label.font_name  = 'ヒラギノ丸ゴ ProN W4.ttc'
+        self.word_list_bar_label.pos        = (0, self.height*0.9)
+        self.word_list_bar_label.size       = (self.width, self.height*0.1)
+        self.word_list_bar_label.text_size  = self.word_list_bar_label.size
+        self.word_list_bar_label.background_color = (0.3, 0.3, 0.3, 0.95)
 
         self.word_list_scroll_view = ScrollView()
         self.word_list_scroll_view.size_hint = (1, None)
@@ -95,6 +112,8 @@ class EverydayEnglish(ScreenManager):
         self.word_list_scroll_view.add_widget(self.word_list_layout)
         self.word_list_screen.add_widget(self.word_list_scroll_view)
         self.add_widget(self.word_list_screen)
+
+        self.word_list_screen.add_widget(self.word_list_bar_label)
 
     def create_word_screen(self):
 
