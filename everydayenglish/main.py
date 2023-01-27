@@ -65,8 +65,8 @@ class EverydayEnglish(ScreenManager):
         self.word_list_bar_label.halign     = 'center'
         self.word_list_bar_label.valign     = 'middle'
         self.word_list_bar_label.font_name  = 'ヒラギノ丸ゴ ProN W4.ttc'
-        self.word_list_bar_label.pos        = (0, self.height*0.9)
-        self.word_list_bar_label.size       = (self.width, self.height*0.1)
+        self.word_list_bar_label.pos        = (0, self.height*0.94)
+        self.word_list_bar_label.size       = (self.width, self.height*0.06)
         self.word_list_bar_label.text_size  = self.word_list_bar_label.size
         self.word_list_bar_label.background_color = (0.3, 0.3, 0.3, 0.95)
 
@@ -119,9 +119,31 @@ class EverydayEnglish(ScreenManager):
 
         self.word_screen = Screen(name="Word")
 
+        self.word_bar_label = Button()
+        self.word_bar_label.text = "< Word List"
+        self.word_bar_label.size_hint_y = None
+        self.word_bar_label.color      = (0, 0.6, 1, 1)
+        self.word_bar_label.font_size  = 40
+        self.word_bar_label.halign     = 'left'
+        self.word_bar_label.valign     = 'middle'
+        self.word_bar_label.pos        = (0, self.height*0.94)
+        self.word_bar_label.size       = (self.width, self.height*0.06)
+        self.word_bar_label.text_size  = self.word_list_bar_label.size
+        self.word_bar_label.background_normal = ''
+        self.word_bar_label.background_disabled_normal = ''
+        self.word_bar_label.background_down = ''
+        self.word_bar_label.background_color = (0.3, 0.3, 0.3, 0.95)
+        #self.word_bar_label.disabled_color = (0.3, 0.3, 0.3, 0.95)
+        self.word_bar_label.on_release = self.back_to_word_list
+        self.word_bar_label.padding_x = self.width*0.02
+        #self.word_bar_label.on_press = self.change_back_to_word_list_button_color
+        #self.word_bar_label.on_release = self.revert_back_to_word_list_button_color 
+        
+        self.word_screen.add_widget(self.word_bar_label)
+
         self.word_scroll_view = ScrollView()
         self.word_scroll_view.size_hint = (1, None)
-        self.word_scroll_view.size = (self.width, self.height)
+        self.word_scroll_view.size = (self.width, self.height*0.94)
 
         self.word_layout = BoxLayout()
         self.word_layout.size = self.size
@@ -132,12 +154,13 @@ class EverydayEnglish(ScreenManager):
         self.word_layout.pos = (0, 0)
 
         print("make")
-        self.title_label = Label(font_size=70,
-                                 color=(1, 0, 0, 1),
+        self.title_label = Label(font_size=50,
+                                 color=(0.9, 0.1, 0.2, 1),
                                  halign='left',
                                  valign='top',
                                  size_hint_y=None,
                                  width=self.width,
+                                 padding_x=self.width*0.02,
                                  font_name=self.JAPANESE_FONT_NAME
                                  )
         self.word_layout.add_widget(self.title_label)
@@ -148,6 +171,7 @@ class EverydayEnglish(ScreenManager):
                                    valign='top',
                                    size_hint_y=None,
                                    width=self.width,
+                                   padding_x=self.width*0.02,
                                    font_name=self.JAPANESE_FONT_NAME
                                    )
         self.word_layout.add_widget(self.meaning_label)
@@ -158,21 +182,16 @@ class EverydayEnglish(ScreenManager):
                                     valign='top',
                                     size_hint_y=None,
                                     width=self.width,
+                                    padding_x=self.width*0.02,
                                     font_name=self.JAPANESE_FONT_NAME
                                     )
         self.word_layout.add_widget(self.sentence_label)
 
-        self.back_to_word_list_button = Button()
-        self.back_to_word_list_button.text = "Back to List"
-        self.back_to_word_list_button.size = (self.width, 100)
-        self.back_to_word_list_button.size_hint_y = None
-        self.back_to_word_list_button.font_size = 50
-        self.back_to_word_list_button.on_release = self.back_to_word_list
-        self.word_layout.add_widget(self.back_to_word_list_button)
-
         self.word_scroll_view.add_widget(self.word_layout)
         self.word_screen.add_widget(self.word_scroll_view)
         self.add_widget(self.word_screen)
+
+
 
     def display_word(self, index):
         word = self.words[index]
