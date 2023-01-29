@@ -1,0 +1,96 @@
+<EverydayEnglish>:
+    word_list_widget: word_list_widget
+    word_title_label: word_title_label
+    word_meaning_label: word_meaning_label
+    word_sentence_label: word_sentence_label
+    word_layout: word_layout
+    Screen:
+        id: word_list_screen
+        name: 'WordList'
+        ScrollView:
+            id: word_list_scroll_view
+            size: root.width, root.height
+            size_hint: 1, None
+            Widget:
+                id: word_list_widget
+                pos: 0, 0
+                size: root.width, root.height*3
+                size_hint_y: None
+        MyLabel:
+            text: 'Word List'
+            pos: 0, root.height * .94
+            halign: 'center'
+            valign: 'middle'
+            size_hint_y: None
+            size: root.width, root.height * .06
+            text_size: self.size
+            font_size: 40
+            color: 1, 1, 1, 1
+            disabled_color: 1, 1, 1, 1
+            background_normal: ''
+            background_color: .3, .3, .3, .95
+
+    Screen:
+        name: 'Word'
+        ScrollView:
+            size: root.width, root.height * .94
+            size_hint_y: None
+            BoxLayout:
+                id: word_layout
+                orientation:'vertical'
+                pos: 0, 0
+                size: root.size
+                size_hint_y: None
+                height: self.minimum_height
+                Label:
+                    id: word_title_label
+                    halign: 'left'
+                    valign: 'top'
+                    padding_x: root.width * .02
+                    padding_y: root.height * .02
+                    width: root.width
+                    size_hint_y: None
+                    color: .9, .1, .2, 1
+                    font_size: 40
+                    font_name: 'ヒラギノ丸ゴ ProN W4.ttc'
+                Label:
+                    id: word_meaning_label
+                    halign: 'left'
+                    valign: 'top'
+                    padding_x: root.width * .02
+                    padding_y: root.height * .02
+                    width: root.width
+                    size_hint_y: None
+                    color: 0, 1, 0, 1
+                    font_size: 40
+                    font_name: 'ヒラギノ丸ゴ ProN W4.ttc'
+                Label:
+                    id: word_sentence_label
+                    halign: 'left'
+                    valign: 'top'
+                    padding_x: root.width * .02
+                    padding_y: root.height * .02
+                    width: root.width
+                    size_hint_y: None
+                    color: 1, 1, 1, 1
+                    font_size: 40
+                    font_name: 'ヒラギノ丸ゴ ProN W4.ttc'
+
+        Button:
+            text: '< Word List'
+            pos: 0, root.height * .94
+            halign: 'left'
+            valign: 'middle'
+            padding_x: self.width*0.02
+            size: root.width, root.height * .06
+            text_size: self.size
+            size_hint_y: None
+            font_size: 40
+            color: 0, 0.6, 1, 1
+            disabled_color: 1, 1, 1, 1
+            background_normal: ''
+            background_disabled_normal: ''
+            background_color: .3, .3, .3, 1
+            #background_color: 0, 0, 0, 1
+            on_release: root.back_to_word_list()
+            on_press: self.background_color = (.3, .3, .3, 1)
