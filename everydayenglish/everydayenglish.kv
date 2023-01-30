@@ -4,6 +4,7 @@
     word_meaning_label: word_meaning_label
     word_sentence_label: word_sentence_label
     word_layout: word_layout
+    word_list_top_bar: word_list_top_bar
     Screen:
         id: word_list_screen
         name: 'WordList'
@@ -17,6 +18,7 @@
                 size: root.width, root.height*3
                 size_hint_y: None
         MyLabel:
+            id: word_list_top_bar
             text: 'Word List'
             pos: 0, root.height * .94
             halign: 'center'
