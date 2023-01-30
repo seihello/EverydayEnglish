@@ -29,6 +29,7 @@ class EverydayEnglish(ScreenManager):
     word_meaning_label = ObjectProperty(None)
     word_sentence_label = ObjectProperty(None)
     word_layout = ObjectProperty(None)
+    word_list_top_bar = ObjectProperty(None)
 
     JAPANESE_FONT_NAME = 'ヒラギノ丸ゴ ProN W4.ttc'
     SWIPE_WIDTH = 50
@@ -73,17 +74,17 @@ class EverydayEnglish(ScreenManager):
             self.word_list_labels.append(word_label)
             height_sum += word_label.title_label.texture_size[1]
     
-        self.word_list_widget.height = height_sum + space * displayed_rows
+        self.word_list_widget.height = height_sum + space * displayed_rows + self.word_list_top_bar.height
     
         y = self.word_list_widget.height
         for i in range(displayed_rows):
             y -= self.word_list_labels[i].title_label.texture_size[1]
-            self.word_list_labels[i].set_y(y)
+            self.word_list_labels[i].set_y(y - self.word_list_top_bar.height)
 
             y -= space / 2
             with self.word_list_widget.canvas:
                 Color(1, 1, 1, 1)
-                Rectangle(pos=(self.width*0.02, y), size=(self.width*0.96, 1))
+                Rectangle(pos=(self.width*0.02, y - self.word_list_top_bar.height), size=(self.width*0.96, 1))
             y -= space / 2
 
 
