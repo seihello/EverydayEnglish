@@ -27,7 +27,6 @@ class WordLabel():
         self.title_label.x          = app.width*0.04
         self.title_label.disabled = False
 
-        self.title_label.font_size      = 50
         self.title_label.size_hint_y    = None
         self.title_label.text_size      = (app.width*0.80, None)
 
@@ -46,12 +45,11 @@ class WordLabel():
         self.level_label.x          = app.width*0.88
 
         #self.level_label.size_hint_y    = None
-        self.level_label.text_size      = (app.width*0.08, 60)
+        self.level_label.text_size      = (app.width*0.08, None)
 
         self.level_label.text       = word.level
         self.level_label.texture_update()
         self.level_label.size       = self.level_label.texture_size
-
 
         if "0" <= word.level and word.level <= "5":
             self.level_label.background_color = WordLabel.COLORS[int(word.level)]
