@@ -30,11 +30,21 @@ class EverydayEnglish(ScreenManager):
     word_sentence_label = ObjectProperty(None)
     word_layout = ObjectProperty(None)
     word_list_top_bar = ObjectProperty(None)
+    word_list_screen = ObjectProperty(None)
+    filter_widget = ObjectProperty(None)
+    level1 = ObjectProperty(None)
+    level2 = ObjectProperty(None)
+    level3 = ObjectProperty(None)
+    level4 = ObjectProperty(None)
+    level5 = ObjectProperty(None)
 
     JAPANESE_FONT_NAME = 'ヒラギノ丸ゴ ProN W4.ttc'
     SWIPE_WIDTH = 50
 
     def prepare(self):
+
+        self.valid_levels = [False, True, True, True, True, True]
+        self.level_buttons = [self.level1, self.level2, self.level3, self.level4, self.level5]
 
         self.load_words()
 
@@ -42,6 +52,10 @@ class EverydayEnglish(ScreenManager):
 
         # Initial screen
         self.current = "WordList"
+
+        self.word_list_screen.remove_widget(self.filter_widget)
+
+        
 
     # Load words from the csv file to make a list
     def load_words(self):
@@ -51,28 +65,46 @@ class EverydayEnglish(ScreenManager):
         
         self.words = []
         for i in range(3, len(self.word_matrix)-1):
-            word = Word(self.word_matrix[i][1], self.word_matrix[i][2], self.word_matrix[i][3], self.word_matrix[i][6])
-            if word.title != 'None' and word.title != '':
-                self.words.append(word)
+            try:
+                title = self.word_matrix[i][1]
+                meaning = self.word_matrix[i][2]
+                sentence = self.word_matrix[i][3]
+                level = int(self.word_matrix[i][6])
+            except ValueError:
+                pass
+            else:
+                if title != 'None' and title != '':
+                    self.words.append(Word(title, meaning, sentence, level))
 
     def create_word_list_screen(self):
+
+        self.word_list_widget.canvas.clear()
 
         shuffle(self.words)
         # self.words = sorted(self.words, key=lambda w: w.level)
 
-        displayed_rows = 100
+        displayed_rows = 200
         space = 20
         height_sum = 0
 
         self.word_list_labels = []
-        for i in range(displayed_rows):
+        count = 0
+        for i in range(len(self.words)):
             word = self.words[i]
+
+            if type(word.level) is not int or not self.valid_levels[word.level]:
+                continue
+            
             word_label = WordLabel(self, word, i)           
             self.word_list_widget.add_widget(word_label.title_label)
             self.word_list_widget.add_widget(word_label.level_label)
 
             self.word_list_labels.append(word_label)
             height_sum += word_label.title_label.texture_size[1]
+
+            count += 1
+            if count >= displayed_rows:
+                break
     
         self.word_list_widget.height = height_sum + space * displayed_rows + self.word_list_top_bar.height
     
@@ -115,6 +147,37 @@ class EverydayEnglish(ScreenManager):
     def back_to_word_list(self):
         self.transition.direction = "right"
         self.current = "WordList"
+    
+    def show_filter(self):
+        self.word_list_screen.add_widget(self.filter_widget)
+
+    def on_release_level1(self):
+        self.on_release_level(1)
+    def on_release_level2(self):
+        self.on_release_level(2)
+    def on_release_level3(self):
+        self.on_release_level(3)
+    def on_release_level4(self):
+        self.on_release_level(4)
+    def on_release_level5(self):
+        self.on_release_level(5)
+    
+    def on_release_level(self, level):
+        if self.valid_levels[level]:
+            self.level_buttons[level-1].background_color = (.3, .3, .3, .95)
+            self.valid_levels[level] = False
+        else:
+            self.level_buttons[level-1].background_color = (0, 0, 1, 1)
+            self.valid_levels[level] = True
+
+    def on_release_OK_button(self):
+        self.word_list_screen.remove_widget(self.filter_widget)
+        self.create_word_list_screen()
+
+
+    
+
+
 
 class EverydayEnglishApp(App):
 

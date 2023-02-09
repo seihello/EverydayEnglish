@@ -47,11 +47,11 @@ class WordLabel():
         #self.level_label.size_hint_y    = None
         self.level_label.text_size      = (app.width*0.08, None)
 
-        self.level_label.text       = word.level
+        self.level_label.text       = str(word.level)
         self.level_label.texture_update()
         self.level_label.size       = self.level_label.texture_size
 
-        if "0" <= word.level and word.level <= "5":
+        if 0 <= word.level and word.level <= 5:
             self.level_label.background_color = WordLabel.COLORS[int(word.level)]
         
     def set_y(self, y):
